@@ -1,0 +1,12 @@
+<html>
+<head>
+    <title>{% block title %}TutorMe{% endblock %}</title>
+</head>
+<body>
+    {% for message in get_flashed_messages() %}
+    {{ message }}
+    {% endfor %}
+    {% block body %}
+    {% endblock %}
+</body>
+</html>
