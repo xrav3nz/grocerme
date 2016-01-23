@@ -8,7 +8,7 @@ class Fridge(db.Model, CRUDMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     # eg. 2
-    quality = db.Column(db.Float)
+    quantity = db.Column(db.Float)
 
     # eg. lbs
     unit_id = db.Column(db.Integer, db.ForeignKey('units.id'))
@@ -17,5 +17,18 @@ class Fridge(db.Model, CRUDMixin):
 
     expiry_date = db.Column(db.DateTime)
 
+    @property
+    def item_name(self):
+        return self.detail.name
+
+    @item_name.setter
+    def item_name(self, item_name):
+        from . import Item
+        new_item = Item.query.filter_by(name=item_name).first()
+        if new_item is None:
+            new_item = Item(name=item_name)
+            new_item.save()
+        self.item_id = new_item.id
+
     def __repr__(self):
-        return '<Fridge %r>' % id
+        return '<Fridge %r>' % self.id

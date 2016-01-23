@@ -4,7 +4,7 @@ from flask.ext.login import UserMixin, AnonymousUserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from ..extensions import db
 from ..utils.database import CRUDMixin
-from ..main.models import Fridge
+from ..main.models import Fridge, Item
 
 BCRYPT_ROUNDS = 12
 
@@ -33,6 +33,12 @@ class User(UserMixin, CRUDMixin, db.Model):
     def verify_password(self, password):
         return check_password_hash(self.password_hash,
                                           password.encode('utf-8'))
+
+    def add_grocery(self, quantity, unit_id, item_name, expiry_date):
+        new_item = Fridge(user_id=self.id, quantity=quantity, unit_id=unit_id, expiry_date=expiry_date)
+        new_item.item_name = item_name
+        new_item.save()
+        return self
 
     def __repr__(self):
         return '<User %r>' % self.username

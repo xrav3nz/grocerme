@@ -8,6 +8,7 @@ from config import config
 from .main import main_blueprint
 from .auth import auth_blueprint
 from .admin import admin_blueprint
+from .api import api_blueprint
 from .users.models import AnonymousUser, User
 from .extensions import db, csrf, login_manager, admin
 
@@ -52,6 +53,7 @@ def configure_blueprints(app):
     app.register_blueprint(main_blueprint)
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(admin_blueprint)
+    app.register_blueprint(api_blueprint, url_prefix='/api')
 
 def configure_errorhandlers(app):
 
