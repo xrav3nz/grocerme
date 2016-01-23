@@ -15,3 +15,5 @@ class Unit(db.Model, CRUDMixin):
         lazy='dynamic',
         cascade='all, delete-orphan')
 
+    def __repr__(self):
+        return '<Unit %r>' % self.abbr

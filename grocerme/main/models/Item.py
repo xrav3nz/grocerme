@@ -7,10 +7,13 @@ class Item(db.Model, CRUDMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
-    default_lifespan = db.Column(db.DateTime)
+    default_lifespan = db.Column(db.Integer)
 
     list = db.relationship('Fridge',
                 foreign_keys=[Fridge.item_id],
                 backref=db.backref('detail', lazy='joined'),
                 lazy='dynamic',
                 cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return '<Item %r>' % self.name
