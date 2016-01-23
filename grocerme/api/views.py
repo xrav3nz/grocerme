@@ -3,10 +3,12 @@ from functools import wraps
 from math import ceil
 from datetime import datetime
 
+# import Requests
+
 from . import api_blueprint
 from ..main.models import Fridge, Unit, Item
 
-from flask import request, Response, abort
+from flask import request, Response, abort, current_app
 from flask.ext.login import current_user
 
 DEFAULT_COUNT = 5
@@ -62,7 +64,7 @@ def fridge_all():
     }
     return Response(json.dumps(resp),  mimetype='application/json')
 
-@api_blueprint.route('/fridges/<id>', methods=['PUT'])
+@api_blueprint.route('/fridges/<int:id>', methods=['PUT'])
 @params_required('quantity', 'unit_id', 'item_name', 'expiry_date')
 def fridge_put(id):
     item = Fridge.query.get(id)
@@ -72,7 +74,7 @@ def fridge_put(id):
     item.expiry_date = datetime.strptime(request.args.get('expiry_date'))
     return Response('successfully executed', 200)
 
-@api_blueprint.route('/fridges/<id>', methods=['DELETE'])
+@api_blueprint.route('/fridges/<int:id>', methods=['DELETE'])
 def fridge_delete(id):
     item = Fridge.query.get(id)
     item.delete()
@@ -125,33 +127,30 @@ def fridge_post():
     current_user.add_grocery(quantity=quantity, unit_id=unit_id, item_name=item_name, expiry_date=expiry_date)
     return Response('successfully created', 201)
 
-@api_blueprint.route('/recipes', methods=['GET'])
-def recipes_get():
-    per_page = int(request.args.get('per_page') or DEFAULT_PER_PAGE)
-    page = int(request.args.get('page') or 1)
-    offset = (page - 1) * per_page
+# @api_blueprint.route('/recipes', methods=['GET'])
+# def recipes_get():
+#     per_page = int(request.args.get('per_page') or DEFAULT_PER_PAGE)
+#     page = int(request.args.get('page') or 1)
+#     offset = (page - 1) * per_page
 
-    q = request.args.get('q')
-    if q:
-        total = current_user.groceries.filter(Item.name.ilike('%' + q + '%')).count()
-        items = current_user.groceries.filter(Item.name.ilike('%' + q + '%')).limit(per_page).offset(offset).all()
-    else:
-        total = current_user.groceries.count()
-        items = current_user.groceries.limit(per_page).offset(offset).all()
+#     q = request.args.get('q')
 
-    total_pages = int(ceil(total / per_page))
+#     url = 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search'
+#     params = {'query': q, 'number': per_page, 'offset': offset}
+#     headers = {'X-Mashape-Key': current_app.config['MASHAPE_KEY']}
+#     r = requests.get(url, headers=headers)
+#     recipes = r.json()
 
-    result = []
-    for item in items:
-        result.append({
-            'img_url': item.id,
-            'quantity': item.quantity,
-            'unit': item.unit.abbr,
-            'name': item.detail.name
-            })
+#     result = []
+#     for recipe in recipes:
+#         result.append({
+#             ''
+#             'img_url': recipe.imageUrls[0],
+#             'title': recipe.title
+#             })
 
-    resp = {
-        'total': total,
-        'results': results
-    }
-    return Response(json.dumps(resp),  mimetype='application/json')
+#     resp = {
+#         'total': total,
+#         'results': results
+#     }
+#     return Response(json.dumps(resp),  mimetype='application/json')
