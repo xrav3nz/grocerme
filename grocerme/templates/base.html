@@ -25,20 +25,20 @@
                             {% endif %}
                         </div>
                     </div></li>
-                <li><a href="my_fridge">My Fridge</a></li>
-                <li><a href="my_receipes">My Receipes</a></li>
-                <li><a href="my_nutrition">My Nutrition</a></li>
-                <li><a href="my_grocery_cart">My Grocery Cart</a></li>
+                <li><a href="{{ url_for('main_blueprint.my_fridge') }}">My Fridge</a></li>
+                <li><a href="{{ url_for('main_blueprint.my_receipes') }}">My Receipes</a></li>
+                <li><a href="{{ url_for('main_blueprint.my_nutrition') }}">My Nutrition</a></li>
+                <li><a href="{{ url_for('main_blueprint.my_grocery_cart') }}">My Grocery Cart</a></li>
             </ul>
             <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
             <a href="#" class="right-align"><i class="material-icons">
-                {% if request.path == "/my_fridge" %}
+                {% if request.url_rule.endpoint == 'main_blueprint.my_fridge' %}
                     kitchen
-                {% elif request.path == "/my_receipes" %}
+                {% elif request.url_rule.endpoint == 'main_blueprint.my_receipes' %}
                     restaurant_menu
-                {% elif request.path == "/my_nutrition" %}
+                {% elif request.url_rule.endpoint == 'main_blueprint.my_nutrition' %}
                     insert_chart
-                {% elif request.path == "/my_grocery_cart" %}
+                {% elif request.url_rule.endpoint == 'main_blueprint.my_grocery_cart' %}
                     shopping_cart
                 {% endif %}
             </i></a>
