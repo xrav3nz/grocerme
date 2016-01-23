@@ -2,11 +2,37 @@
 
 
 {% block body %}
-this is the nutrition page<br>
-Hello,
-{% if current_user.is_authenticated %}
-    {{ current_user.username }}
-{% else %}
-Stranger
-{% endif %}!
+<div class="container">
+	<div class="section">
+		<div class="row">
+			<div class="col s3">
+				<h3 class="title">kCal</h3>
+			</div>
+			<div class="col s9">
+				<span id="caloriesBar" class="bar">25</span>
+			</div>
+		</div>
+	</div>
+	<div class="section">
+		<div class="row">
+			<div class="col s3">
+				<h3 class="title">Na</h3>
+			</div>
+			<div class="col s9">
+				<span id="sodiumBar" class="bar">25</span>
+			</div>
+		</div>
+	</div>
+	<div class="section">
+		<div class="row">
+			<div class="col s3">
+				<h3 class="title">Sugar</h3>
+			</div>
+			<div class="col s9">
+				<span id="sugarBar" class="bar">25</span>
+			</div>
+		</div>
+	</div>
+	
+</div>
 {% endblock %}
