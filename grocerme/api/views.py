@@ -15,13 +15,9 @@ DEFAULT_COUNT = 5
 DEFAULT_OFFSET = 10
 DEFAULT_PER_PAGE = 5
 
-def api_auth_required(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        if not current_user.is_authenticated:
-            abort(401)
-        return f(*args, **kwargs)
-    return wrapper
+def api_auth_required():
+    if not current_user.is_authenticated:
+        abort(401)
 
 def params_required(*params):
     def wrapper(f):
@@ -42,8 +38,23 @@ def custom_401(error):
 def custom_400(error):
     return Response('bad request', 400)
 
-@api_blueprint.before_request
-@api_auth_required
+api_blueprint.before_request(api_auth_required)
+
+@api_blueprint.route('/fridges/<int:id>', methods=['DELETE'])
+def fridge_delete(id):
+    item = Fridge.query.get(id)
+    item.delete()
+    return Response("successfully executed", 200)
+
+@api_blueprint.route('/fridges/<int:id>', methods=['PUT'])
+@params_required('quantity', 'unit_id', 'item_name', 'expiry_date')
+def fridge_put(id):
+    item = Fridge.query.get(id)
+    item.quantity = int(request.args.get('quantity'))
+    item.unit_id = int(request.args.get('unit_id'))
+    item.item_name = request.args.get('item_name')
+    item.expiry_date = datetime.strptime(request.args.get('expiry_date'))
+    return Response('successfully executed', 200)
 
 
 @api_blueprint.route('/fridges/all', methods=['GET'])
@@ -63,22 +74,6 @@ def fridge_all():
         'items': result
     }
     return Response(json.dumps(resp),  mimetype='application/json')
-
-@api_blueprint.route('/fridges/<int:id>', methods=['PUT'])
-@params_required('quantity', 'unit_id', 'item_name', 'expiry_date')
-def fridge_put(id):
-    item = Fridge.query.get(id)
-    item.quantity = int(request.args.get('quantity'))
-    item.unit_id = int(request.args.get('unit_id'))
-    item.item_name = request.args.get('item_name')
-    item.expiry_date = datetime.strptime(request.args.get('expiry_date'))
-    return Response('successfully executed', 200)
-
-@api_blueprint.route('/fridges/<int:id>', methods=['DELETE'])
-def fridge_delete(id):
-    item = Fridge.query.get(id)
-    item.delete()
-    return Response('successfully executed', 200)
 
 @api_blueprint.route('/fridges', methods=['GET'])
 def fridge_get():
