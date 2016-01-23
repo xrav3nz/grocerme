@@ -43,6 +43,40 @@ def custom_400(error):
 @api_blueprint.before_request
 @api_auth_required
 
+
+@api_blueprint.route('/fridges/all', methods=['GET'])
+def fridge_all():
+    items = current_user.groceries.all()
+    result = []
+    for item in items:
+        result.append({
+            'id': item.id,
+            'quantity': item.quantity,
+            'unit': item.unit.abbr,
+            'name': item.detail.name
+            })
+
+    resp = {
+        'items': result
+    }
+    return Response(json.dumps(resp),  mimetype='application/json')
+
+@api_blueprint.route('/fridges/<id>', methods=['PUT'])
+@params_required('quantity', 'unit_id', 'item_name', 'expiry_date')
+def fridge_put(id):
+    item = Fridge.query.get(id)
+    item.quantity = int(request.args.get('quantity'))
+    item.unit_id = int(request.args.get('unit_id'))
+    item.item_name = request.args.get('item_name')
+    item.expiry_date = datetime.strptime(request.args.get('expiry_date'))
+    return Response('successfully executed', 200)
+
+@api_blueprint.route('/fridges/<id>', methods=['DELETE'])
+def fridge_put(id):
+    item = Fridge.query.get(id)
+    item.delete()
+    return Response('successfully executed', 200)
+
 @api_blueprint.route('/fridges', methods=['GET'])
 def fridge_get():
 
@@ -77,25 +111,8 @@ def fridge_get():
     }
     return Response(json.dumps(resp),  mimetype='application/json')
 
-@api_blueprint.route('/fridges/all', methods=['GET'])
-def fridge_all():
-    items = current_user.groceries.all()
-    result = []
-    for item in items:
-        result.append({
-            'id': item.id,
-            'quantity': item.quantity,
-            'unit': item.unit.abbr,
-            'name': item.detail.name
-            })
-
-    resp = {
-        'items': result
-    }
-    return Response(json.dumps(resp),  mimetype='application/json')
-
 @api_blueprint.route('/fridges', methods=['POST'])
-@params_required('quantity', 'unit_id', 'item_id', 'item_name', 'expiry_date')
+@params_required('quantity', 'unit_id', 'item_name', 'expiry_date')
 def fridge_post():
     quantity = int(request.args.get('quantity'))
     unit_id = int(request.args.get('unit_id'))
@@ -103,12 +120,8 @@ def fridge_post():
     item_name = request.args.get('item_name')
     expiry_date = datetime.strptime(request.args.get('expiry_date'))
 
-    current_user.add_grocery(quantity=quantity, unit_id=unit_id, item_id=item_id, item_name=item_name, expiry_date=expiry_date)
+    current_user.add_grocery(quantity=quantity, unit_id=unit_id, item_name=item_name, expiry_date=expiry_date)
     return Response('successfully created', 201)
 
-@api_blueprint.route('/fridges/<id>', methods=['PUT', 'DELETE'])
-@params_required('quantity', 'unit_id', 'item_id', 'item_name', 'expiry_date')
-def fridge_modify(id):
-    pass
 
 
