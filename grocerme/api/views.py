@@ -54,7 +54,7 @@ def fridge_all():
             'quantity': item.quantity,
             'unit': item.unit.abbr,
             'name': item.detail.name,
-            'expiry_date': item.expiry_date
+            'expiry_date': str(item.expiry_date)
             })
 
     resp = {
@@ -102,7 +102,7 @@ def fridge_get():
             'quantity': item.quantity,
             'unit': item.unit.abbr,
             'name': item.detail.name,
-            'expiry_date': item.expiry_date
+            'expiry_date': str(item.expiry_date)
             })
 
     resp = {
@@ -124,3 +124,34 @@ def fridge_post():
 
     current_user.add_grocery(quantity=quantity, unit_id=unit_id, item_name=item_name, expiry_date=expiry_date)
     return Response('successfully created', 201)
+
+@api_blueprint.route('/recipes', methods=['GET'])
+def recipes_get():
+    per_page = int(request.args.get('per_page') or DEFAULT_PER_PAGE)
+    page = int(request.args.get('page') or 1)
+    offset = (page - 1) * per_page
+
+    q = request.args.get('q')
+    if q:
+        total = current_user.groceries.filter(Item.name.ilike('%' + q + '%')).count()
+        items = current_user.groceries.filter(Item.name.ilike('%' + q + '%')).limit(per_page).offset(offset).all()
+    else:
+        total = current_user.groceries.count()
+        items = current_user.groceries.limit(per_page).offset(offset).all()
+
+    total_pages = int(ceil(total / per_page))
+
+    result = []
+    for item in items:
+        result.append({
+            'img_url': item.id,
+            'quantity': item.quantity,
+            'unit': item.unit.abbr,
+            'name': item.detail.name
+            })
+
+    resp = {
+        'total': total,
+        'results': results
+    }
+    return Response(json.dumps(resp),  mimetype='application/json')
