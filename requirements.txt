@@ -3,6 +3,7 @@ bcrypt==2.0.0
 cffi==1.5.0
 click==6.2
 Flask==0.10.1
+Flask-Admin==1.4.0
 Flask-Bcrypt==0.6.2
 Flask-Login==0.3.2
 Flask-Migrate==1.7.0

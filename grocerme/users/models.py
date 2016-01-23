@@ -1,7 +1,8 @@
 from datetime import datetime
 from flask import current_app
 from flask.ext.login import UserMixin, AnonymousUserMixin
-from ..extensions import bcrypt, db
+from werkzeug.security import generate_password_hash, check_password_hash
+from ..extensions import db
 from ..utils.database import CRUDMixin
 from ..main.models import Fridge
 
@@ -27,10 +28,10 @@ class User(UserMixin, CRUDMixin, db.Model):
 
     @password.setter
     def password(self, password):
-        self.password_hash = bcrypt.generate_password_hash(password.encode('utf-8'))
+        self.password_hash = generate_password_hash(password.encode('utf-8'))
 
     def verify_password(self, password):
-        return bcrypt.check_password_hash(self.password_hash,
+        return check_password_hash(self.password_hash,
                                           password.encode('utf-8'))
 
     def __repr__(self):

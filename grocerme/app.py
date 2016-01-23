@@ -9,7 +9,7 @@ from .main import main_blueprint
 from .auth import auth_blueprint
 from .admin import admin_blueprint
 from .users.models import AnonymousUser, User
-from .extensions import db, bcrypt, csrf, login_manager, admin
+from .extensions import db, csrf, login_manager, admin
 
 def create_app(config_name):
 
@@ -41,9 +41,6 @@ def configure_extensions(app):
         return User.query.get(int(user_id))
 
     login_manager.init_app(app)
-
-    # Flask-Bcrypt
-    bcrypt.init_app(app)
 
     # Flask-WTF CSRF
     csrf.init_app(app)
