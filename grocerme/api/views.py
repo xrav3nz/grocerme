@@ -53,7 +53,8 @@ def fridge_all():
             'id': item.id,
             'quantity': item.quantity,
             'unit': item.unit.abbr,
-            'name': item.detail.name
+            'name': item.detail.name,
+            'expiry_date': item.expiry_date
             })
 
     resp = {
@@ -72,7 +73,7 @@ def fridge_put(id):
     return Response('successfully executed', 200)
 
 @api_blueprint.route('/fridges/<id>', methods=['DELETE'])
-def fridge_put(id):
+def fridge_delete(id):
     item = Fridge.query.get(id)
     item.delete()
     return Response('successfully executed', 200)
@@ -100,7 +101,8 @@ def fridge_get():
             'id': item.id,
             'quantity': item.quantity,
             'unit': item.unit.abbr,
-            'name': item.detail.name
+            'name': item.detail.name,
+            'expiry_date': item.expiry_date
             })
 
     resp = {
@@ -122,6 +124,3 @@ def fridge_post():
 
     current_user.add_grocery(quantity=quantity, unit_id=unit_id, item_name=item_name, expiry_date=expiry_date)
     return Response('successfully created', 201)
-
-
-
