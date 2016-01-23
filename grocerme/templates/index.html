@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block body %}
+this is the index page<br>
+Hello,
+{% if current_user.is_authenticated %}
+    {{ current_user.username }}
+{% else %}
+Stranger
+{% endif %}!
+{% endblock %}

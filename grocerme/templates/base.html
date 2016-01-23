@@ -1,11 +1,13 @@
 <html>
 <head>
-    <title>{% block title %}TutorMe{% endblock %}</title>
+    <title>{% block title %}GrocerMe{% endblock %}</title>
 </head>
 <body>
+    <div>
     {% for message in get_flashed_messages() %}
     {{ message }}
     {% endfor %}
+    </div>
     {% block body %}
     {% endblock %}
 </body>

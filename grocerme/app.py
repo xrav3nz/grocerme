@@ -5,6 +5,9 @@ from flask import Flask, render_template
 
 from config import config
 
+from .main import main_blueprint
+from .auth import auth_blueprint
+from .users.models import AnonymousUser, User
 from .extensions import db, bcrypt, csrf, login_manager
 
 def create_app(config_name):
@@ -28,15 +31,15 @@ def configure_extensions(app):
     db.init_app(app)
 
     # Flask-Login
-    # login_manager.session_protection = 'strong'
-    # login_manager.login_view = 'auth_blueprint.login'
-    # login_manager.anonymous_user = AnonymousUser
+    login_manager.session_protection = 'strong'
+    login_manager.login_view = 'auth_blueprint.login'
+    login_manager.anonymous_user = AnonymousUser
 
-    # @login_manager.user_loader
-    # def load_user(user_id):
-    #     return User.query.get(int(user_id))
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
 
-    # login_manager.init_app(app)
+    login_manager.init_app(app)
 
     # Flask-Bcrypt
     bcrypt.init_app(app)
@@ -45,7 +48,8 @@ def configure_extensions(app):
     csrf.init_app(app)
 
 def configure_blueprints(app):
-    pass
+    app.register_blueprint(main_blueprint)
+    app.register_blueprint(auth_blueprint)
 
 def configure_errorhandlers(app):
 
