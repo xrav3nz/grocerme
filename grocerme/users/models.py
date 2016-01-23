@@ -3,6 +3,7 @@ from flask import current_app
 from flask.ext.login import UserMixin, AnonymousUserMixin
 from ..extensions import bcrypt, db
 from ..utils.database import CRUDMixin
+from ..main.models import Fridge
 
 BCRYPT_ROUNDS = 12
 
@@ -13,6 +14,12 @@ class User(UserMixin, CRUDMixin, db.Model):
     email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
+
+    groceries = db.relationship('Fridge',
+            foreign_keys=[Fridge.user_id],
+            backref=db.backref('owner', lazy='joined'),
+            lazy='dynamic',
+            cascade='all, delete-orphan')
 
     @property
     def password(self):
