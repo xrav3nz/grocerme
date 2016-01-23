@@ -8,7 +8,7 @@ class Fridge(db.Model, CRUDMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     # eg. 2
-    quality = db.Column(db.Float)
+    quantity = db.Column(db.Float)
 
     # eg. lbs
     unit_id = db.Column(db.Integer, db.ForeignKey('units.id'))
