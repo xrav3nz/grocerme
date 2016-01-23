@@ -1,8 +1,49 @@
 <html>
 <head>
     <title>{% block title %}GrocerMe{% endblock %}</title>
+ 	<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/materialize.min.css') }}"><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body>
+    <nav class="light-green lighten-1" role="navigation">
+        <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">GrocerMe</a>
+            <ul class="right hide-on-med-and-down">
+                <li><a href="#">Navbar Link</a></li>
+            </ul>
+
+            <ul id="nav-mobile" class="side-nav">
+                <li>
+                    <div class="row">
+                        <div class="col s4">
+                            <img src="{{ url_for('static', filename='img/tomato.jpg') }}" width="100%" class="circle">
+                        </div>
+                        <div class="col s8 grey-text darken-4">
+                            {% if current_user.is_authenticated %}
+                                {{ current_user.username }}
+                            {% else %}
+                                Stranger
+                            {% endif %}
+                        </div>
+                    </div></li>
+                <li><a href="my_fridge">My Fridge</a></li>
+                <li><a href="my_receipes">My Receipes</a></li>
+                <li><a href="my_nutrition">My Nutrition</a></li>
+                <li><a href="my_grocery_cart">My Grocery Cart</a></li>
+            </ul>
+            <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+            <a href="#" class="right-align"><i class="material-icons">
+                {% if request.path == "/my_fridge" %}
+                    kitchen
+                {% elif request.path == "/my_receipes" %}
+                    restaurant_menu
+                {% elif request.path == "/my_nutrition" %}
+                    insert_chart
+                {% elif request.path == "/my_grocery_cart" %}
+                    shopping_cart
+                {% endif %}
+            </i></a>
+        </div>
+    </nav>
     <div>
     {% for message in get_flashed_messages() %}
     {{ message }}
@@ -10,5 +51,9 @@
     </div>
     {% block body %}
     {% endblock %}
+
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/materialize.min.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/init.js') }}"></script>
 </body>
 </html>
