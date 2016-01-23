@@ -3,7 +3,7 @@ from functools import wraps
 from math import ceil
 from datetime import datetime
 
-# import Requests
+import requests
 
 from . import api_blueprint
 from ..main.models import Fridge, Unit, Item
@@ -122,30 +122,29 @@ def fridge_post():
     current_user.add_grocery(quantity=quantity, unit_id=unit_id, item_name=item_name, expiry_date=expiry_date)
     return Response('successfully created', 201)
 
-# @api_blueprint.route('/recipes', methods=['GET'])
-# def recipes_get():
-#     per_page = int(request.args.get('per_page') or DEFAULT_PER_PAGE)
-#     page = int(request.args.get('page') or 1)
-#     offset = (page - 1) * per_page
+@api_blueprint.route('/recipes', methods=['GET'])
+def recipes_get():
+    per_page = int(request.args.get('per_page') or DEFAULT_PER_PAGE)
+    page = int(request.args.get('page') or 1)
+    offset = (page - 1) * per_page
 
-#     q = request.args.get('q')
+    q = request.args.get('q') or 'meat'
 
-#     url = 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search'
-#     params = {'query': q, 'number': per_page, 'offset': offset}
-#     headers = {'X-Mashape-Key': current_app.config['MASHAPE_KEY']}
-#     r = requests.get(url, headers=headers)
-#     recipes = r.json()
+    url = 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search'
+    params = {'query': q, 'number': per_page, 'offset': offset}
+    headers = {'X-Mashape-Key': current_app.config['MASHAPE_KEY']}
+    r = requests.get(url, headers=headers, params=params)
+    recipes = json.loads(r.text)
 
-#     result = []
-#     for recipe in recipes:
-#         result.append({
-#             ''
-#             'img_url': recipe.imageUrls[0],
-#             'title': recipe.title
-#             })
+    result = []
+    for recipe in recipes['results']:
+        result.append({
+            'id': recipe['id'],
+            'img_url': recipes['baseUri'] + recipe['image'],
+            'title': recipe['title']
+            })
 
-#     resp = {
-#         'total': total,
-#         'results': results
-#     }
-#     return Response(json.dumps(resp),  mimetype='application/json')
+    resp = {
+        'results': result
+    }
+    return Response(json.dumps(resp),  mimetype='application/json')
