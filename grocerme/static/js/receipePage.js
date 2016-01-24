@@ -10,6 +10,7 @@ $(document).ready(function(){
     ajaxGet(endpoint.recommend, '', 0, 0);
     $('#recipeSearch').bind('click', function() {
     	$("#seeMore").hide();
+    	$("#header1").hide();
     	$("#receipeGen").empty();
     	page = 0;
     	key_word = $("#search").val();
@@ -21,10 +22,12 @@ $(document).ready(function(){
     $('#seeMore').bind('click', function(e) {
     	e.preventDefault();
     	ajaxGet(endpoint.search, key_word, 4, page);
-    	console.log(page);
     	++page;
     })
-    $('#seeMore').hide();
+    $('.card').bind('click', function() {
+    	var recipe_id = $(this).attr('id');
+    	console.log(recipe_id);
+    })
 });
 
 function ajaxGet(endpoint, q, per_page, page, callback) {
@@ -40,7 +43,7 @@ function ajaxGet(endpoint, q, per_page, page, callback) {
 	        for (var i=0;i<data.results.length;++i) {
 	        	$('#receipeGen').append(
 	        		'<div class="col s6 m4 l3"> \
-						<div class="card"> \
+						<div class="card" id="' + data.results[i].id + '"> \
 							<div class="card-image"> \
 								<img style="height: 25%" src="' + data.results[i].img_url + '"> \
 							</div> \
@@ -50,7 +53,8 @@ function ajaxGet(endpoint, q, per_page, page, callback) {
 						</div> \
 					</div>');
 	        }
-	        callback();
+	        if (data.results.length > 0 && callback)
+		        callback();
         }
     });
 }
