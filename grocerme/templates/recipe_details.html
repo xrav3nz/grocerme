@@ -1,0 +1,6 @@
+
+<div>{{ recipe.title }}</div>
+<div><img src="https://spoonacular.com/recipeImages/{{ recipe.image }}" /></div>
+{% for ingredient in recipe.extendedIngredients %}
+<div>{{ ingredient.originalString }}</div>
+{% endfor %}

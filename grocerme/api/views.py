@@ -8,7 +8,7 @@ import requests
 from . import api_blueprint
 from ..main.models import Fridge, Unit, Item
 
-from flask import request, Response, abort, current_app
+from flask import request, Response, abort, current_app, render_template
 from flask.ext.login import current_user
 
 DEFAULT_COUNT = 5
@@ -150,6 +150,23 @@ def recipes_get_by(id):
     r = requests.get(url, headers=headers)
     recipe = json.loads(r.text)
 
+    return Response(render_template('recipe_details.html', recipe=recipe),  mimetype='text/html')
+
+@api_blueprint.route('/recipes', methods=['GET'])
+def recipes_get():
+    per_page = int(request.args.get('per_page') or DEFAULT_PER_PAGE)
+    page = int(request.args.get('page') or 1)
+    offset = (page - 1) * per_page
+    offset += 10
+
+    q = request.args.get('q') or 'meat'
+
+    url = 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search'
+    params = {'query': q, 'number': per_page, 'offset': offset, 'limitLicense': 'false'}
+    headers = {'X-Mashape-Key': current_app.config['MASHAPE_KEY']}
+    r = requests.get(url, headers=headers, params=params)
+    recipes = json.loads(r.text)
+
     result = []
     if 'results' in recipes:
         for recipe in recipes['results']:
@@ -164,28 +181,26 @@ def recipes_get_by(id):
     }
     return Response(json.dumps(resp),  mimetype='application/json')
 
-@api_blueprint.route('/recipes', methods=['GET'])
-def recipes_get():
-    per_page = int(request.args.get('per_page') or DEFAULT_PER_PAGE)
-    page = int(request.args.get('page') or 1)
-    offset = (page - 1) * per_page
-
-    q = request.args.get('q') or 'meat'
-
-    url = 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search'
-    params = {'query': q, 'number': per_page, 'offset': offset}
+@api_blueprint.route('/recipes/recommend', methods=['GET'])
+def recipes_recommend():
+    url = 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/findByIngredients'
+    all_groceries = current_user.groceries.all()
+    ingredients = []
+    for grocery in all_groceries:
+        ingredients.append(grocery.detail.name)
+    params = {'limitLicense': 'false', 'number': 4, 'ranking': 2,
+                'ingredients': ','.join(ingredients).lower()}
     headers = {'X-Mashape-Key': current_app.config['MASHAPE_KEY']}
     r = requests.get(url, headers=headers, params=params)
     recipes = json.loads(r.text)
 
     result = []
-    if 'results' in recipes:
-        for recipe in recipes['results']:
-            result.append({
-                'id': recipe['id'],
-                'img_url': recipes['baseUri'] + recipe['image'],
-                'title': recipe['title']
-                })
+    for recipe in recipes:
+        result.append({
+            'id': recipe['id'],
+            'img_url': recipe['image'],
+            'title': recipe['title']
+            })
 
     resp = {
         'results': result

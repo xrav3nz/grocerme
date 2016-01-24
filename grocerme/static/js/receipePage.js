@@ -1,26 +1,49 @@
 $(document).ready(function(){
 	// fixes the search bar
+	var page = 0;
+	var key_word = "";
+	var endpoint = {
+		'recommend': '/api/recipes/recommend',
+		'search': '/api/recipes'
+	};
     $('.search-wrapper .section').pushpin({ top: $('.search-wrapper').offset().top });
-    ajaxGet();
+    ajaxGet(endpoint.recommend, '', 0, 0);
     $('#recipeSearch').bind('click', function() {
-    	console.log("hi");
+    	$("#seeMore").hide();
+    	$("#header1").hide();
     	$("#receipeGen").empty();
-    	ajaxGet($("#search").val());
+    	page = 0;
+    	key_word = $("#search").val();
+    	ajaxGet(endpoint.search, key_word, 4, page, function() {
+    		$('#seeMore').show();
+    	});
+    	++page;
     });
-
+    $('#seeMore').bind('click', function(e) {
+    	e.preventDefault();
+    	ajaxGet(endpoint.search, key_word, 4, page);
+    	++page;
+    })
+    $('.card').bind('click', function() {
+    	var recipe_id = $(this).attr('id');
+    	console.log(recipe_id);
+    })
 });
 
-function ajaxGet(q) {
+function ajaxGet(endpoint, q, per_page, page, callback) {
 	$.ajax({
         type: 'GET',
-        url: '/api/recipes',
-        data: {'q': q, 'per_page': 4},
+        url: endpoint,
+        data: {'q': q, 'per_page': per_page, 'page': page},
         success: function (data) {
             console.log(data);
-	        for (var i=0;i<data.results.length;++i){
+            if (data.results.length <= 0) {
+            	$('#receipeGen').append('<h6 class="light center-align"> No matches :( </h6>');
+            }
+	        for (var i=0;i<data.results.length;++i) {
 	        	$('#receipeGen').append(
 	        		'<div class="col s6 m4 l3"> \
-						<div class="card"> \
+						<div class="card" id="' + data.results[i].id + '"> \
 							<div class="card-image"> \
 								<img style="height: 25%" src="' + data.results[i].img_url + '"> \
 							</div> \
@@ -30,6 +53,8 @@ function ajaxGet(q) {
 						</div> \
 					</div>');
 	        }
+	        if (data.results.length > 0 && callback)
+		        callback();
         }
     });
 }
