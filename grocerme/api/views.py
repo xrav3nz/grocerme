@@ -8,7 +8,7 @@ import requests
 from . import api_blueprint
 from ..main.models import Fridge, Unit, Item
 
-from flask import request, Response, abort, current_app
+from flask import request, Response, abort, current_app, render_template
 from flask.ext.login import current_user
 
 DEFAULT_COUNT = 5
@@ -150,19 +150,7 @@ def recipes_get_by(id):
     r = requests.get(url, headers=headers)
     recipe = json.loads(r.text)
 
-    result = []
-    if 'results' in recipes:
-        for recipe in recipes['results']:
-            result.append({
-                'id': recipe['id'],
-                'img_url': recipes['baseUri'] + recipe['image'],
-                'title': recipe['title']
-                })
-
-    resp = {
-        'results': result
-    }
-    return Response(json.dumps(resp),  mimetype='application/json')
+    return Response(render_template('recipe_details.html', recipe=recipe),  mimetype='text/html')
 
 @api_blueprint.route('/recipes', methods=['GET'])
 def recipes_get():
@@ -217,4 +205,5 @@ def recipes_recommend():
     resp = {
         'results': result
     }
-    return Response(json.dumps(resp),  mimetype='application/json')
+    return
+    # return Response(json.dumps(resp),  mimetype='application/json')
