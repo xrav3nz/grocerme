@@ -2,11 +2,9 @@
 
 
 {% block body %}
-this is the index page<br>
-Hello,
-{% if current_user.is_authenticated %}
-    {{ current_user.username }}
-{% else %}
-Stranger
-{% endif %}!
+<div class="container">
+	<h1 class="header">Welcome</h1>
+	<h3 class="light">GrocerMe is your electronic refrigerator :)</h3>
+	<h3 class="light">Please swipe right to access the navigation bar!</h3>
+</div>
 {% endblock %}
