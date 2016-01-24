@@ -122,6 +122,18 @@ def fridge_post():
     current_user.add_grocery(quantity=quantity, unit_id=unit_id, item_name=item_name, expiry_date=expiry_date)
     return Response('successfully created', 201)
 
+@api_blueprint.route('/units', methods=['GET'])
+def units_get():
+    units = Unit.query.all()
+    response = []
+    for unit in units:
+        response.append({
+            'id': unit.id,
+            'name': unit.name,
+            'abbr': unit.abbr
+            })
+    return Response(json.dumps(response), mimetype='application/json')
+
 @api_blueprint.route('/recipes', methods=['GET'])
 def recipes_get():
     per_page = int(request.args.get('per_page') or DEFAULT_PER_PAGE)
