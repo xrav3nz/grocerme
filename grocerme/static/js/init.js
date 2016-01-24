@@ -48,31 +48,30 @@ function FridgeViewModel() {
 			unit_id: self.selectedUnit().id,
 			expiry_date: moment(self.newItemExpiryDate()).format("YYYY-MM-DD HH:mm:SS")
 		};
-		console.log(newItem);
 		$.ajax({
 			url: '/api/fridges',
 			data: newItem,
 			type: 'POST',
 			success: function(result) {
 				// getAllItems();
-				self.fridgeItems.push(new FridgeItem(result));
+				self.fridgeItems.push(new FridgeItem(JSON.parse(result)));
 			}
 		});
 	}
 
 
 	self.getAllItems = function() {
-		
-		$.getJSON("/api/fridges/all", function(data) { 
-		    // Now use this data to update your view models, 
-		    // and Knockout will update your UI automatically 
+
+		$.getJSON("/api/fridges/all", function(data) {
+		    // Now use this data to update your view models,
+		    // and Knockout will update your UI automatically
 		    var result = $.map(data.items, function(item) { return new FridgeItem(item) });
 		    self.fridgeItems(result);
 		    console.log(self.fridgeItems());
 		});
 	}
 
-	self.removeItem = function(item) { 
+	self.removeItem = function(item) {
 		$.ajax({
 			url: '/api/fridges/' + item.id,
 			type: 'DELETE',
@@ -111,7 +110,7 @@ ko.applyBindings(new FridgeViewModel());
 
 
 $(document).ready(function() {
-	
+
 	$('.datepicker').pickadate({
 		selectMonths: true, // Creates a dropdown to control month
 		selectYears: 15 // Creates a dropdown of 15 years to control year
@@ -130,7 +129,7 @@ $(document).ready(function() {
 	var caloriesData = 85;
 	var sodiumData = 85;
 	var sugarData = 85;
-	
+
 	var opt = {
 		horBarHeight: 30,
 		foreColor: '#9ccc65',
@@ -141,7 +140,7 @@ $(document).ready(function() {
 	$('#caloriesBar').barIndicator(opt);
 	$('#sodiumBar').barIndicator(opt);
 	$('#sugarBar').barIndicator(opt);
-	
+
 	setTimeout(function() {
 		$('#caloriesBar').barIndicator('loadNewData', [caloriesData]);
 		$('#sodiumBar').barIndicator('loadNewData', [sodiumData]);
@@ -154,7 +153,7 @@ var buildContents = function() {
 	var optHolder = $('#cont-options');
 	var methodHolder = $('#cont-methods');
 	var eventHolder = $('#cont-events');
-	
+
 	$('.secOpt').each(function() {
 		var that = $(this);
 		var id = that.attr('id');
@@ -206,7 +205,7 @@ $(document).on('click', '#cont-toggle', function() {
 });
 
 $('#goTop').on('click', function() {
-	$('body,html').animate({scrollTop:0},350,'easeOutExpo');	
+	$('body,html').animate({scrollTop:0},350,'easeOutExpo');
 });
 
 $(window).resize(function() {

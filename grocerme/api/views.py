@@ -113,13 +113,23 @@ def fridge_get():
 @api_blueprint.route('/fridges', methods=['POST'])
 # @params_required('quantity', 'unit_id', 'item_name', 'expiry_date')
 def fridge_post():
-    quantity = int(request.form.get('quantity'))
+    quantity = float(request.form.get('quantity'))
     unit_id = int(request.form.get('unit_id'))
     item_name = request.form.get('item_name')
     expiry_date = datetime.strptime(request.form.get('expiry_date'), '%Y-%m-%d %H:%M:%S')
 
-    current_user.add_grocery(quantity=quantity, unit_id=unit_id, item_name=item_name, expiry_date=expiry_date)
-    return Response('successfully created', 201)
+    # current_user.add_grocery(quantity=quantity, unit_id=unit_id, item_name=item_name, expiry_date=expiry_date)
+    new_item = Fridge(user_id=current_user.id, quantity=quantity, unit_id=unit_id, expiry_date=expiry_date)
+    new_item.item_name = item_name
+    new_item.save()
+    response = {
+        'id': new_item.id,
+        'quantity': new_item.quantity,
+        'unit': new_item.unit.abbr,
+        'name': new_item.detail.name,
+        'expiry_date': str(new_item.expiry_date)
+    }
+    return Response(json.dumps(response), 201)
 
 @api_blueprint.route('/units', methods=['GET'])
 def units_get():
