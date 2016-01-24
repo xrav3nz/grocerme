@@ -59,7 +59,7 @@ function ajaxGet(endpoint, q, per_page, page, callback) {
 						</div> \
 					</div>');
 	        }
-	        if (data.results.length > 0 && callback)
+	        if (data.results.length > 0)
 		        callback();
         }
     });
