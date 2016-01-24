@@ -2,11 +2,22 @@
 
 
 {% block body %}
-this is the receipes page<br>
-Hello,
-{% if current_user.is_authenticated %}
-    {{ current_user.username }}
-{% else %}
-Stranger
-{% endif %}!
+<div class="section">
+	<div class="search-wrapper card">
+		<input id="search">
+		<i class="material-icons">search</i>
+		<div class="search-results"></div>
+	</div>
+</div>
+
+<div class="container">
+	<div class = "row receipeCard">
+
+	</div>
+</div>
+
+
+
+
+
 {% endblock %}
