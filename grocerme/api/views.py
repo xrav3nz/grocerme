@@ -191,3 +191,29 @@ def recipes_get():
         'results': result
     }
     return Response(json.dumps(resp),  mimetype='application/json')
+
+@api_blueprint.route('/recipes/recommend', methods=['GET'])
+def recipes_recommend():
+    url = 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/findByIngredients'
+    all_groceries = current_user.groceries.all()
+    ingredients = []
+    for grocery in all_groceries:
+        ingredients.append(grocery.detail.name)
+    params = {'limitLicense': 'false', 'number': 4, 'ranking': 2,
+                'ingredients': ','.join(ingredients).lower()}
+    headers = {'X-Mashape-Key': current_app.config['MASHAPE_KEY']}
+    r = requests.get(url, headers=headers, params=params)
+    recipes = json.loads(r.text)
+
+    result = []
+    for recipe in recipes:
+        result.append({
+            'id': recipe['id'],
+            'img_url': recipe['image'],
+            'title': recipe['title']
+            })
+
+    resp = {
+        'results': result
+    }
+    return Response(json.dumps(resp),  mimetype='application/json')
