@@ -2,17 +2,23 @@
 
 
 {% block body %}
-<div class="section">
-	<div class="search-wrapper card">
-		<input id="search">
-		<i class="material-icons">search</i>
-		<div class="search-results"></div>
-	</div>
-</div>
-
 <div class="container">
-	<div class = "row receipeCard" id="receipeCard">
+	<div class="section">
+		<h2 class="header">Recipes</h2>
+	</div>
+	<div class="section">
+		<div class="search-wrapper input-field col s12">
+			<input id="search">
+			<i class="material-icons" id="recipeSearch">search</i>
+			<div class="search-results"></div>
+		</div>
+	</div>
 
+	<div class="section">
+		<h4 class="header">Recipes based on your groceries:</h4>
+		<div class = "row">
+			<div id="receipeGen"></div>
+		</div>
 	</div>
 </div>
 
