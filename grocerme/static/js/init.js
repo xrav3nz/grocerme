@@ -7,9 +7,9 @@ function FridgeItem(item) {
 	if (moment().diff(date_obj) < 0) {
 		this.expire_note = "Expires in " + date_obj.toNow(true);
 	} else {
-		this.expire_note = "Expired in " + date_obj.toNow(true);
+		this.expire_note = "Expired for " + date_obj.toNow(true);
 	}
-	this.expiry_date = item.expiry_date;
+	this.expiry_time = date_obj.format("x");
 }
 
 function Unit(unit) {
@@ -36,6 +36,11 @@ function FridgeViewModel() {
 	self.selectedUnit = ko.observable();
 	self.fridgeItems = ko.observableArray([]);
 
+	self.editItemName = ko.observable();
+	self.editItemQuantity = ko.observable();
+	self.editItemUnit = ko.observable();
+	self.editItemExpiryDate = ko.observable();
+
 	self.newItemName = ko.observable();
 	self.newItemQuantity = ko.observable();
 	self.newItemUnit = ko.observable();
@@ -48,6 +53,7 @@ function FridgeViewModel() {
 			unit_id: self.selectedUnit().id,
 			expiry_date: moment(self.newItemExpiryDate()).format("YYYY-MM-DD HH:mm:SS")
 		};
+
 		$.ajax({
 			url: '/api/fridges',
 			data: newItem,
@@ -55,10 +61,21 @@ function FridgeViewModel() {
 			success: function(result) {
 				// getAllItems();
 				self.fridgeItems.push(new FridgeItem(JSON.parse(result)));
+				sortFridgeItems();
 			}
 		});
 	}
 
+
+	function sortFridgeItems() {
+		self.sortedFridgeItems = ko.computed(function(){
+			return self.fridgeItems().sort(function(l, r){ 
+				return l.expiry_time == r.expiry_time ? 
+				(l.name.toLowerCase() < r.name.toLowerCase() ? -1 : 1) : 
+				(l.expiry_time < r.expiry_time ? -1 : 1) 
+			});
+		});
+	}
 
 	self.getAllItems = function() {
 
@@ -67,7 +84,6 @@ function FridgeViewModel() {
 		    // and Knockout will update your UI automatically
 		    var result = $.map(data.items, function(item) { return new FridgeItem(item) });
 		    self.fridgeItems(result);
-		    console.log(self.fridgeItems());
 		});
 	}
 
@@ -76,31 +92,44 @@ function FridgeViewModel() {
 			url: '/api/fridges/' + item.id,
 			type: 'DELETE',
 			success: function(result) {
-				Materialize.toast('I am a toast!', 4000)
-				getAllItems();
+				Materialize.toast('Removed one item from fridge!', 4000)
+				self.fridgeItems.remove(item);
 			}
 		});
 	};
 
 	self.editItem = function(item) {
+		self.editItem = item;
+		self.editItemName(item.name);
+		self.editItemUnit(item.unit);
+		self.editItemQuantity(item.quantity);
+		var expiry_date = moment(item.expiry_time, "x").format("D MMMM, YYYY");
+		console.log(self.editItem);
+		self.editItemExpiryDate(expiry_date);
+		$('#edit-item-modal').openModal();
+	};
+
+	self.saveEditedItem = function() {
 		var editItem = {
-			item_name: item.name,
-			quantity: item.quantity,
-			unit_id: item.unit,
-			expiry_date: item.expiryDate
+			item_name: self.editItemName(),
+			quantity: self.editItemQuantity(),
+			unit_id: self.editItemUnit().id,
+			expiry_date: moment(self.editItemExpiryDate()).format("YYYY-MM-DD HH:mm:SS")
 		};
+		console.log(editItem);
 		$.ajax({
-			data: ko.toJSON({ item: item }),
-			url: '/api/fridges/' + item.id,
+			data: self.editItem,
+			url: '/api/fridges/' + self.editItem.id,
 			type: 'PUT',
 			success: function(result) {
-				getAllItems();
+				self.fridgeItems.remove(editItem);
+
 			}
 		});
 	};
 
 	self.getAllItems();
-
+	sortFridgeItems();
 	getAllUnits();
 
 }

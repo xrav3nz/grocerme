@@ -47,14 +47,22 @@ def fridge_delete(id):
     return Response("successfully executed", 200)
 
 @api_blueprint.route('/fridges/<int:id>', methods=['PUT'])
-@params_required('quantity', 'unit_id', 'item_name', 'expiry_date')
+# @params_required('quantity', 'unit_id', 'item_name', 'expiry_date')
 def fridge_put(id):
     item = Fridge.query.get(id)
-    item.quantity = int(request.args.get('quantity'))
-    item.unit_id = int(request.args.get('unit_id'))
-    item.item_name = request.args.get('item_name')
-    item.expiry_date = datetime.strptime(request.args.get('expiry_date'))
-    return Response('successfully executed', 200)
+    item.quantity = float(request.form.get('quantity'))
+    item.unit_id = int(request.form.get('unit_id'))
+    item.item_name = request.form.get('item_name')
+    item.expiry_date = datetime.strptime(request.form.get('expiry_date'))
+    item.save()
+    response = {
+        'id': item.id,
+        'quantity': item.quantity,
+        'unit': item.unit.abbr,
+        'name': item.detail.name,
+        'expiry_date': str(item.expiry_date)
+    }
+    return Response(json.dumps(response), 200)
 
 
 @api_blueprint.route('/fridges/all', methods=['GET'])
@@ -111,7 +119,7 @@ def fridge_get():
     return Response(json.dumps(resp),  mimetype='application/json')
 
 @api_blueprint.route('/fridges', methods=['POST'])
-# @params_required('quantity', 'unit_id', 'item_name', 'expiry_date')
+@params_required('quantity', 'unit_id', 'item_name', 'expiry_date')
 def fridge_post():
     quantity = float(request.form.get('quantity'))
     unit_id = int(request.form.get('unit_id'))
