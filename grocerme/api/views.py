@@ -53,7 +53,7 @@ def fridge_put(id):
     item.quantity = float(request.form.get('quantity'))
     item.unit_id = int(request.form.get('unit_id'))
     item.item_name = request.form.get('item_name')
-    item.expiry_date = datetime.strptime(request.form.get('expiry_date'))
+    item.expiry_date = datetime.strptime(request.form.get('expiry_date'), '%Y-%m-%d %H:%M:%S')
     item.save()
     response = {
         'id': item.id,
