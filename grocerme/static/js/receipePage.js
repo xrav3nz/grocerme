@@ -6,6 +6,7 @@ $(document).ready(function(){
 		'recommend': '/api/recipes/recommend',
 		'search': '/api/recipes'
 	};
+	var in_ajax = false;
     $('.search-wrapper .section').pushpin({ top: $('.search-wrapper').offset().top });
     ajaxGet(endpoint.recommend, '', 0, 0);
     $('#recipeSearch').bind('click', function() {
@@ -25,9 +26,12 @@ $(document).ready(function(){
     	++page;
     })
     $('#receipeGen').on('click', '.card', function() {
+    	if (in_ajax) return ;
+    	in_ajax = true;
     	var recipe_id = $(this).attr('id');
     	$('#recipeDetails').load('/api/recipes/' + recipe_id, function() {
     		 $('#recipeModal').openModal();
+    		 in_ajax = false;
     	});
     })
 });
