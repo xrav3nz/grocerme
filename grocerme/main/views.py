@@ -5,6 +5,10 @@ from . import main_blueprint
 def index():
     return render_template('index.html')
 
+@main_blueprint.route('/login')
+def login():
+    return render_template('auth/login.html')
+
 @main_blueprint.route('/fridge')
 def my_fridge():
     return render_template('my_fridge.html')
