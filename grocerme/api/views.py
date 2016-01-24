@@ -137,12 +137,13 @@ def recipes_get():
     recipes = json.loads(r.text)
 
     result = []
-    for recipe in recipes['results']:
-        result.append({
-            'id': recipe['id'],
-            'img_url': recipes['baseUri'] + recipe['image'],
-            'title': recipe['title']
-            })
+    if 'results' in recipes:
+        for recipe in recipes['results']:
+            result.append({
+                'id': recipe['id'],
+                'img_url': recipes['baseUri'] + recipe['image'],
+                'title': recipe['title']
+                })
 
     resp = {
         'results': result
