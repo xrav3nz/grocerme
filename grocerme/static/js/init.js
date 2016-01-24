@@ -18,31 +18,14 @@ function Unit(unit) {
 	this.id = unit.id;
 }
 
-function getAllItems() {
-	var self = this;
-
-	self.fridgeItems = ko.observable([]);
-	
-	$.getJSON("/api/fridges/all", function(data) { 
-	    // Now use this data to update your view models, 
-	    // and Knockout will update your UI automatically 
-	    var result = $.map(data.items, function(item) { return new FridgeItem(item) });
-	    self.fridgeItems(result);
-	});
-}
-
 function getAllUnits() {
 	var self = this;
 
-	self.units = ko.observable([]);
+	self.units = ko.observableArray([]);
 
-	$.getJSON("/api/units", function(data) { 
-	    // Now use this data to update your view models, 
-	    // and Knockout will update your UI automatically 
-	    console.log(data);
+	$.getJSON("/api/units", function(data) {
 	    var result = $.map(data, function(unit) { return new Unit(unit) });
 	    self.units(result);
-		console.log(self.units);
 	});
 }
 
@@ -51,15 +34,12 @@ function FridgeViewModel() {
 	var self = this;
 
 	self.selectedUnit = ko.observable();
+	self.fridgeItems = ko.observableArray([]);
 
 	self.newItemName = ko.observable();
 	self.newItemQuantity = ko.observable();
 	self.newItemUnit = ko.observable();
 	self.newItemExpiryDate = ko.observable();
-
-	getAllItems();
-
-	getAllUnits();
 
 	self.addItem = function() {
 		var newItem = {
@@ -70,12 +50,25 @@ function FridgeViewModel() {
 		};
 		console.log(newItem);
 		$.ajax({
-			data: ko.toJSON({ item: newItem }),
-			url: '/api/fridges/',
+			url: '/api/fridges',
+			data: newItem,
 			type: 'POST',
 			success: function(result) {
-				getAllItems();
+				// getAllItems();
+				self.fridgeItems.push(new FridgeItem(result));
 			}
+		});
+	}
+
+
+	self.getAllItems = function() {
+		
+		$.getJSON("/api/fridges/all", function(data) { 
+		    // Now use this data to update your view models, 
+		    // and Knockout will update your UI automatically 
+		    var result = $.map(data.items, function(item) { return new FridgeItem(item) });
+		    self.fridgeItems(result);
+		    console.log(self.fridgeItems());
 		});
 	}
 
@@ -106,6 +99,10 @@ function FridgeViewModel() {
 			}
 		});
 	};
+
+	self.getAllItems();
+
+	getAllUnits();
 
 }
 
