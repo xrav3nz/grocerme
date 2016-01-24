@@ -1,20 +1,27 @@
 $(document).ready(function(){
 	// fixes the search bar
+	var page = 0;
+	var key_word = "";
     $('.search-wrapper .section').pushpin({ top: $('.search-wrapper').offset().top });
     ajaxGet();
     $('#recipeSearch').bind('click', function() {
-    	console.log("hi");
     	$("#receipeGen").empty();
-    	ajaxGet($("#search").val());
+    	page = 0;
+    	key_word = $("#search").val();
+    	ajaxGet(key_word, 4, page);
+    	++page;
     });
-
+    $('#seeMore').bind('click', function() {
+    	ajaxGet(key_word, 4, page);
+    	++page;
+    })
 });
 
-function ajaxGet(q) {
+function ajaxGet(q, per_page, page) {
 	$.ajax({
         type: 'GET',
         url: '/api/recipes',
-        data: {'q': q, 'per_page': 4},
+        data: {'q': q, 'per_page': per_page, 'page': page},
         success: function (data) {
             console.log(data);
 	        for (var i=0;i<data.results.length;++i){
