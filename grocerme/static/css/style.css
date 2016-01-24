@@ -38,3 +38,12 @@
     background-color: #eee;
     outline: none
 }
+
+.modal {
+    min-height: 75%;
+}
+
+.picker--opened .picker__frame {
+    top: 0;
+    bottom: auto;
+}
