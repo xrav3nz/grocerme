@@ -1,30 +1,38 @@
 $(document).ready(function(){
 	// fixes the search bar
     $('.search-wrapper .section').pushpin({ top: $('.search-wrapper').offset().top });
-    console.log("potato");
-    $.ajax({
-        type: 'GET',
-        url: '/api/recipes',
-        // data: { get_param: 'results' },
-        success: function (data) {
-            console.log(data);
-	        for (var i=0;i<data.results.length;++i){
-	        	$('.receipeCard').append(
-	        		'<div class="col s6 m4 l3"> \
-						<div class="card"> \
-							<div class="card-image"> \
-								<img src="' + data.results[i].img_url + '"> \
-							</div> \
-						<div class="card-content"> \
-			    			<span class="card-title activator grey-text text-darken-4">' + data.results[i].title+ '</span> \
-			    		</div> \
-					</div> \
-				</div>');
-	        }
-        }
+    ajaxGet();
+    $('#recipeSearch').bind('click', function() {
+    	console.log("hi");
+    	$("#receipeGen").empty();
+    	ajaxGet($("#search").val());
     });
 
 });
+
+function ajaxGet(q) {
+	$.ajax({
+        type: 'GET',
+        url: '/api/recipes',
+        data: {'q': q, 'per_page': 4},
+        success: function (data) {
+            console.log(data);
+	        for (var i=0;i<data.results.length;++i){
+	        	$('#receipeGen').append(
+	        		'<div class="col s6 m4 l3"> \
+						<div class="card"> \
+							<div class="card-image"> \
+								<img style="height: 25%" src="' + data.results[i].img_url + '"> \
+							</div> \
+							<div class="card-content"> \
+			    				<span style="font-size: 18px" class="card-title activator grey-text text-darken-4 truncate">' + data.results[i].title+ '</span> \
+			    			</div> \
+						</div> \
+					</div>');
+	        }
+        }
+    });
+}
 
 // function populator() {
 // 	ajax->JSON
