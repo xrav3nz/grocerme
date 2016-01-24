@@ -24,9 +24,11 @@ $(document).ready(function(){
     	ajaxGet(endpoint.search, key_word, 4, page);
     	++page;
     })
-    $('.card').bind('click', function() {
+    $('#receipeGen').on('click', '.card', function() {
     	var recipe_id = $(this).attr('id');
-    	console.log(recipe_id);
+    	$('#recipeDetails').load('/api/recipes/' + recipe_id, function() {
+    		 $('#recipeModal').openModal();
+    	});
     })
 });
 
@@ -40,7 +42,7 @@ function ajaxGet(endpoint, q, per_page, page, callback) {
             if (data.results.length <= 0) {
             	$('#receipeGen').append('<h6 class="light center-align"> No matches :( </h6>');
             }
-	        for (var i=0;i<data.results.length;++i) {
+	        for (var i = 0; i < data.results.length; ++i) {
 	        	$('#receipeGen').append(
 	        		'<div class="col s6 m4 l3"> \
 						<div class="card" id="' + data.results[i].id + '"> \
