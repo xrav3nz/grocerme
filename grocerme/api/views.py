@@ -168,7 +168,7 @@ def recipes_get_by(id):
 def recipes_get():
     per_page = int(request.args.get('per_page') or DEFAULT_PER_PAGE)
     page = int(request.args.get('page') or 1)
-    offset = (page - 1) * per_page if page else 0
+    offset = (page - 1) * per_page
     offset += 10
 
     q = request.args.get('q') or 'meat'

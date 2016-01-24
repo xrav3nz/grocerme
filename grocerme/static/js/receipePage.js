@@ -2,29 +2,42 @@ $(document).ready(function(){
 	// fixes the search bar
 	var page = 0;
 	var key_word = "";
+	var endpoint = {
+		'recommend': '/api/recipes/recommend',
+		'search': '/api/recipes'
+	};
     $('.search-wrapper .section').pushpin({ top: $('.search-wrapper').offset().top });
-    ajaxGet();
+    ajaxGet(endpoint.recommend, '', 0, 0);
     $('#recipeSearch').bind('click', function() {
+    	$("#seeMore").hide();
     	$("#receipeGen").empty();
     	page = 0;
     	key_word = $("#search").val();
-    	ajaxGet(key_word, 4, page);
+    	ajaxGet(endpoint.search, key_word, 4, page, function() {
+    		$('#seeMore').show();
+    	});
     	++page;
     });
-    $('#seeMore').bind('click', function() {
-    	ajaxGet(key_word, 4, page);
+    $('#seeMore').bind('click', function(e) {
+    	e.preventDefault();
+    	ajaxGet(endpoint.search, key_word, 4, page);
+    	console.log(page);
     	++page;
     })
+    $('#seeMore').hide();
 });
 
-function ajaxGet(q, per_page, page) {
+function ajaxGet(endpoint, q, per_page, page, callback) {
 	$.ajax({
         type: 'GET',
-        url: '/api/recipes',
+        url: endpoint,
         data: {'q': q, 'per_page': per_page, 'page': page},
         success: function (data) {
             console.log(data);
-	        for (var i=0;i<data.results.length;++i){
+            if (data.results.length <= 0) {
+            	$('#receipeGen').append('<h6 class="light center-align"> No matches :( </h6>');
+            }
+	        for (var i=0;i<data.results.length;++i) {
 	        	$('#receipeGen').append(
 	        		'<div class="col s6 m4 l3"> \
 						<div class="card"> \
@@ -37,6 +50,7 @@ function ajaxGet(q, per_page, page) {
 						</div> \
 					</div>');
 	        }
+	        callback();
         }
     });
 }
