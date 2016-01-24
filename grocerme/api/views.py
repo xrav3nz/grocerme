@@ -168,12 +168,13 @@ def recipes_get_by(id):
 def recipes_get():
     per_page = int(request.args.get('per_page') or DEFAULT_PER_PAGE)
     page = int(request.args.get('page') or 1)
-    offset = (page - 1) * per_page
+    offset = (page - 1) * per_page if page else 0
+    offset += 10
 
     q = request.args.get('q') or 'meat'
 
     url = 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search'
-    params = {'query': q, 'number': per_page, 'offset': offset}
+    params = {'query': q, 'number': per_page, 'offset': offset, 'limitLicense': 'false'}
     headers = {'X-Mashape-Key': current_app.config['MASHAPE_KEY']}
     r = requests.get(url, headers=headers, params=params)
     recipes = json.loads(r.text)
