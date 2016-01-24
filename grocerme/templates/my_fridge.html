@@ -2,32 +2,54 @@
 
 
 {% block body %}
-<div class="section">
 
+<div class="fixed-action-btn" style="bottom: 75px; right: 50px;">
+	<a class="btn-floating btn-large waves-effect waves-light modal-trigger" href="#add-item-modal">
+		<i class="material-icons">add</i>
+	</a>
 </div>
-<div class="container">
-	<div class="row valign-wrapper">
-		<div class="col s9">
-			<div class="search-wrapper card">
-				<input id="search">
-				<i class="material-icons">search</i>
-				<div class="search-results"></div>
+<div class="section">	
+	<div class="container">
+		<div class="row valign-wrapper">
+			<div class="col s12">
+				<div class="search-wrapper card">
+					<input id="search">
+					<i class="material-icons">search</i>
+					<div class="search-results"></div>
+				</div>
 			</div>
 		</div>
-		<div class="col s3 center-align valign">
-			<!-- Modal Trigger -->
-			<a class="waves-effect waves-light btn modal-trigger circle" href="#add-item-modal">ADD</a>
-		</div>
+		<ul class="collection" data-bind="foreach: sortedFridgeItems">
+			<li class="collection-item dismissable">
+				<div class="row">
+					<div class="col s3 valign-wrapper">
+						<img src="{{ url_for('static', filename='img/tomato.jpg') }}" class="circle responsive-img valign">
+					</div>
+					<div class="col s6">
+						<strong data-bind="text: name"></strong>
+						<p><span data-bind="text: quantity"></span><span data-bind="text: unit"></span></p>
+						<p data-bind="text: expire_note"></p>
+					</div>
+					<div class="col s3">
+						<div class="row">
+							<div class="col s12">
+								<a class="btn-floating btn waves-effect waves-light red" href="#" data-bind="click: $parent.removeItem">
+									<i class="material-icons">delete</i>
+								</a>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col s12">
+								<a class="btn-floating btn waves-effect waves-light modal-trigger" href="#edit-item-modal" data-bind="click: $parent.editItem">
+									<i class="material-icons">edit</i>
+								</a>		
+							</div>
+						</div>
+					</div>
+				</div>
+			</li>
+		</ul>
 	</div>
-	<ul class="collection" data-bind="foreach: fridgeItems">
-		<li class="collection-item avatar dismissable">
-			<img src="{{ url_for('static', filename='img/tomato.jpg') }}" class="circle responsive-img">
-			<strong data-bind="text: name"></strong>
-			<p><span data-bind="text: quantity"></span><span data-bind="text: unit"></span></p>
-			<p data-bind="text: expire_note"></p>
-			 <a href="#" data-bind="click: $parent.removeItem">Delete</a>
-		</li>
-	</ul>
 </div>
 
 <!-- Modal Structure -->
@@ -54,7 +76,7 @@
 										optionsCaption: 'Choose unit', 
 										value: selectedUnit">
 							<option value="" disabled selected>Choose unit</option>
-							<option value="2" data-bind="text: abbr"></option>
+							<option data-bind="text: abbr"></option>
 						</select>
 					</div>
 					<label for="unit">Unit</label>
@@ -63,6 +85,7 @@
 			<div class="row">
 				<div class="input-field col s12">
 					<input type="date" class="datepicker" data-bind="value: newItemExpiryDate">
+					<label for"date">Date</label>
 				</div>
 			</div>
 		</form>
@@ -70,6 +93,47 @@
 	</div>
 	<div class="modal-footer">
 		<a href="#" class="modal-action modal-close waves-effect waves-green btn-flat" data-bind="click: addItem">Agree</a>
+	</div>
+</div>
+
+<div id="edit-item-modal" class="modal">
+	<div class="modal-content">
+	<div class="row">
+		<form class="col s12">
+			<div class="row">
+				<div class="input-field col s12">
+					<input id="name" type="text" class="validate" data-bind="value: editItemName">
+					<!-- <label for="name" class="active">Name</label> -->
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s6">
+					<input id="quantity" type="text" class="validate" data-bind="value: editItemQuantity">
+					<!-- <label for="quantity" class="active">Quantity</label> -->
+				</div>
+				<div class="input-field col s6">
+					<div class="select-wrapper">
+						<select data-bind="
+										options: units, 
+										optionsText: 'abbr',
+										value: editItemUnit">
+							<option data-bind="value: abbr"></option>
+						</select>
+					</div>
+					<!-- <label for="unit">Unit</label> -->
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s12">
+					<input type="date" class="datepicker" data-bind="value: editItemExpiryDate">
+					<!-- <label for"date" class="active">Date</label> -->
+				</div>
+			</div>
+		</form>
+	</div>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="modal-action modal-close waves-effect waves-green btn-flat" data-bind="click: saveEditedItem">Agree</a>
 	</div>
 </div>
 {% endblock %}

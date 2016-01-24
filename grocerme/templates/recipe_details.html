@@ -1,6 +1,8 @@
-
-<div>{{ recipe.title }}</div>
-<div><img src="https://spoonacular.com/recipeImages/{{ recipe.image }}" /></div>
-{% for ingredient in recipe.extendedIngredients %}
-<div>{{ ingredient.originalString }}</div>
-{% endfor %}
+<div class="cols s12">
+	<div><h5 class='light'>{{ recipe.title }}</h5></div>
+	<div><a href='{{ recipe.sourceUrl }}'>Recipe URL</a></div>
+	<div><img class="responsive-img" src="https://spoonacular.com/recipeImages/{{ recipe.image }}" /></div>
+	{% for ingredient in recipe.extendedIngredients %}
+		<div>{{ ingredient.originalString|safe }}</div>
+	{% endfor %}
+</div>
