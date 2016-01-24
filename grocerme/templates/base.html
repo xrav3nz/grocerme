@@ -29,7 +29,7 @@
                             {% if current_user.is_authenticated %}
                                 {{ current_user.username }}
                             {% else %}
-                                <a href="{{ url_for('main_blueprint.login') }}">Login</a>
+                                <a href="{{ url_for('auth_blueprint.login') }}">Login</a>
                             {% endif %}
                         </div>
                     </div>
