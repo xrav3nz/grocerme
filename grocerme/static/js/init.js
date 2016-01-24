@@ -12,10 +12,17 @@ function FridgeItem(item) {
 	this.expiry_date = item.expiry_date;
 }
 
+function Unit(unit) {
+	this.name = unit.name;
+	this.abbr = unit.abbr;
+	this.id = unit.id;
+}
+
 function getAllItems() {
 	var self = this;
 
 	self.fridgeItems = ko.observable([]);
+	
 	$.getJSON("/api/fridges/all", function(data) { 
 	    // Now use this data to update your view models, 
 	    // and Knockout will update your UI automatically 
@@ -24,9 +31,26 @@ function getAllItems() {
 	});
 }
 
+function getAllUnits() {
+	var self = this;
+
+	self.units = ko.observable([]);
+
+	$.getJSON("/api/units", function(data) { 
+	    // Now use this data to update your view models, 
+	    // and Knockout will update your UI automatically 
+	    console.log(data);
+	    var result = $.map(data, function(unit) { return new Unit(unit) });
+	    self.units(result);
+		console.log(self.units);
+	});
+}
+
 // This is a simple *viewmodel* - JavaScript that defines the data and behavior of your UI
 function FridgeViewModel() {
 	var self = this;
+
+	self.selectedUnit = ko.observable();
 
 	self.newItemName = ko.observable();
 	self.newItemQuantity = ko.observable();
@@ -35,22 +59,22 @@ function FridgeViewModel() {
 
 	getAllItems();
 
+	getAllUnits();
+
 	self.addItem = function() {
 		var newItem = {
-			item_name: self.newItemName,
-			quantity: self.newItemQuantity,
-			unit_id: self.newItemUnit,
-			expiry_date: self.newItemExpiryDate
+			item_name: self.newItemName(),
+			quantity: self.newItemQuantity(),
+			unit_id: self.selectedUnit().id,
+			expiry_date: moment(self.newItemExpiryDate()).format("YYYY-MM-DD HH:mm:SS")
 		};
-
+		console.log(newItem);
 		$.ajax({
 			data: ko.toJSON({ item: newItem }),
 			url: '/api/fridges/',
 			type: 'POST',
 			success: function(result) {
-				// Do something with the result
-				console.log(result);
-				// getAllItems();
+				getAllItems();
 			}
 		});
 	}
@@ -60,7 +84,6 @@ function FridgeViewModel() {
 			url: '/api/fridges/' + item.id,
 			type: 'DELETE',
 			success: function(result) {
-				// Do something with the result
 				Materialize.toast('I am a toast!', 4000)
 				getAllItems();
 			}
@@ -79,9 +102,7 @@ function FridgeViewModel() {
 			url: '/api/fridges/' + item.id,
 			type: 'PUT',
 			success: function(result) {
-				// Do something with the result
-				console.log(result);
-				// getAllItems();
+				getAllItems();
 			}
 		});
 	};

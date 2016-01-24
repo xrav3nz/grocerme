@@ -3,16 +3,22 @@
 
 {% block body %}
 <div class="section">
-	<div class="search-wrapper card">
-		<input id="search">
-		<i class="material-icons">search</i>
-		<div class="search-results"></div>
-	</div>
+
 </div>
 <div class="container">
-	<!-- Modal Trigger -->
-	<a class="waves-effect waves-light btn modal-trigger" href="#add-item-modal">Add Groceries</a>
-
+	<div class="row">
+		<div class="col s9">
+			<div class="search-wrapper card">
+				<input id="search">
+				<i class="material-icons">search</i>
+				<div class="search-results"></div>
+			</div>
+		</div>
+		<div class="col s3 center-align">
+			<!-- Modal Trigger -->
+			<a class="waves-effect waves-light btn modal-trigger circle" href="#add-item-modal">ADD</a>
+		</div>
+	</div>
 	<ul class="collection" data-bind="foreach: fridgeItems">
 		<li class="collection-item avatar dismissable">
 			<img src="{{ url_for('static', filename='img/tomato.jpg') }}" class="circle responsive-img">
@@ -42,11 +48,13 @@
 				</div>
 				<div class="input-field col s6">
 					<div class="select-wrapper">
-						<select data-bind="value: newItemUnit">
-							<option value="" disabled selected>Choose your unit</option>
-							<option value="1">g</option>
-							<option value="2">Kg</option>
-							<option value="3">lb</option>
+						<select data-bind="
+										options: units, 
+										optionsText: 'abbr',
+										optionsCaption: 'Choose unit', 
+										value: selectedUnit">
+							<option value="" disabled selected>Choose unit</option>
+							<option value="2" data-bind="text: abbr"></option>
 						</select>
 					</div>
 					<label for="unit">Unit</label>

@@ -5,5 +5,5 @@ from flask_admin import Admin
 
 db = SQLAlchemy()
 login_manager = LoginManager()
-csrf = CsrfProtect()
+# csrf = CsrfProtect()
 admin = Admin()

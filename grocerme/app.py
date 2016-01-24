@@ -10,7 +10,7 @@ from .auth import auth_blueprint
 from .admin import admin_blueprint
 from .api import api_blueprint
 from .users.models import AnonymousUser, User
-from .extensions import db, csrf, login_manager, admin
+from .extensions import db, login_manager, admin
 
 def create_app(config_name):
 
@@ -44,7 +44,7 @@ def configure_extensions(app):
     login_manager.init_app(app)
 
     # Flask-WTF CSRF
-    csrf.init_app(app)
+    # csrf.init_app(app)
 
     # Flask-Admin
     admin.init_app(app)
