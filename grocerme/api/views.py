@@ -24,7 +24,7 @@ def params_required(*params):
         @wraps(f)
         def decorated_view(*args, **kwargs):
             for param in params:
-                if param not in request.args:
+                if not request.args.get(param) and not request.form.get(param):
                     abort(400)
             return f(*args, **kwargs)
         return decorated_view
@@ -113,11 +113,10 @@ def fridge_get():
 @api_blueprint.route('/fridges', methods=['POST'])
 @params_required('quantity', 'unit_id', 'item_name', 'expiry_date')
 def fridge_post():
-    quantity = int(request.args.get('quantity'))
-    unit_id = int(request.args.get('unit_id'))
-    item_id = int(request.args.get('item_id'))
-    item_name = request.args.get('item_name')
-    expiry_date = datetime.strptime(request.args.get('expiry_date'))
+    quantity = int(request.form.get('quantity'))
+    unit_id = int(request.form.get('unit_id'))
+    item_name = request.form.get('item_name')
+    expiry_date = datetime.strptime(request.form.get('expiry_date'), '%Y-%m-%d %H:%M:%S')
 
     current_user.add_grocery(quantity=quantity, unit_id=unit_id, item_name=item_name, expiry_date=expiry_date)
     return Response('successfully created', 201)
@@ -133,6 +132,27 @@ def units_get():
             'abbr': unit.abbr
             })
     return Response(json.dumps(response), mimetype='application/json')
+
+@api_blueprint.route('/recipes/<int:id>', methods=['GET'])
+def recipes_get_by(id):
+    url = 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/%s/information' % str(id)
+    headers = {'X-Mashape-Key': current_app.config['MASHAPE_KEY']}
+    r = requests.get(url, headers=headers)
+    recipe = json.loads(r.text)
+
+    result = []
+    if 'results' in recipes:
+        for recipe in recipes['results']:
+            result.append({
+                'id': recipe['id'],
+                'img_url': recipes['baseUri'] + recipe['image'],
+                'title': recipe['title']
+                })
+
+    resp = {
+        'results': result
+    }
+    return Response(json.dumps(resp),  mimetype='application/json')
 
 @api_blueprint.route('/recipes', methods=['GET'])
 def recipes_get():
