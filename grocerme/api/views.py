@@ -205,5 +205,4 @@ def recipes_recommend():
     resp = {
         'results': result
     }
-    return
-    # return Response(json.dumps(resp),  mimetype='application/json')
+    return Response(json.dumps(resp),  mimetype='application/json')
