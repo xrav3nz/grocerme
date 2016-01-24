@@ -77,8 +77,8 @@ function FridgeViewModel() {
 			url: '/api/fridges/' + item.id,
 			type: 'DELETE',
 			success: function(result) {
-				Materialize.toast('I am a toast!', 4000)
-				getAllItems();
+				Materialize.toast('Removed one item from fridge!', 4000)
+				self.fridgeItems.remove(item);
 			}
 		});
 	};
