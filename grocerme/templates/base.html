@@ -11,7 +11,10 @@
     <nav class="light-green lighten-1" role="navigation">
         <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">GrocerMe</a>
             <ul class="right hide-on-med-and-down">
-                <li><a href="#">Navbar Link</a></li>
+                <li><a href="{{ url_for('main_blueprint.my_fridge') }}">My Fridge</a></li>
+                <li><a href="{{ url_for('main_blueprint.my_receipes') }}">My Receipes</a></li>
+                <li><a href="{{ url_for('main_blueprint.my_nutrition') }}">My Nutrition</a></li>
+                <li><a href="{{ url_for('main_blueprint.my_grocery_cart') }}">My Grocery Cart</a></li>
             </ul>
 
             <ul id="nav-mobile" class="side-nav">
@@ -29,7 +32,8 @@
                                 Stranger
                             {% endif %}
                         </div>
-                    </div></li>
+                    </div>
+                </li>
                 <li><a href="{{ url_for('main_blueprint.my_fridge') }}">My Fridge</a></li>
                 <li><a href="{{ url_for('main_blueprint.my_receipes') }}">My Receipes</a></li>
                 <li><a href="{{ url_for('main_blueprint.my_nutrition') }}">My Nutrition</a></li>
@@ -60,7 +64,9 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.easing.1.3.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-barIndicator.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('static', filename='js/materialize.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/moment-with-locales.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/knockout-3.4.0.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/materialize.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/init.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/lunr.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/search.js') }}"></script>

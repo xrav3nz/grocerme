@@ -10,37 +10,58 @@
 	</div>
 </div>
 <div class="container">
-	<ul class="collection">
+	<!-- Modal Trigger -->
+	<a class="waves-effect waves-light btn modal-trigger" href="#add-item-modal">Add Groceries</a>
+
+	<ul class="collection" data-bind="foreach: fridgeItems">
 		<li class="collection-item avatar dismissable">
 			<img src="{{ url_for('static', filename='img/tomato.jpg') }}" class="circle responsive-img">
-			<span class="title">
-				{% if item %}
-					{{item}}
-				{% else %}
-					Tomato
-				{% endif %}
-			</span>
-		</li>
-		<li class="collection-item avatar dismissable">
-			<img src="{{ url_for('static', filename='img/tomato.jpg') }}" class="circle responsive-img">
-			<span class="title">
-				{% if item %}
-					{{item}}
-				{% else %}
-					Tomato
-				{% endif %}
-			</span>
-		</li>
-		<li class="collection-item avatar dismissable">
-			<img src="{{ url_for('static', filename='img/tomato.jpg') }}" class="circle responsive-img">
-			<span class="title">
-				{% if item %}
-					{{item}}
-				{% else %}
-					Tomato
-				{% endif %}
-			</span>
+			<strong data-bind="text: name"></strong>
+			<p><span data-bind="text: quantity"></span><span data-bind="text: unit"></span></p>
+			<p data-bind="text: expire_note"></p>
+			 <a href="#" data-bind="click: $parent.removeItem">Delete</a>
 		</li>
 	</ul>
+</div>
+
+<!-- Modal Structure -->
+<div id="add-item-modal" class="modal">
+	<div class="modal-content">
+	<div class="row">
+		<form class="col s12">
+			<div class="row">
+				<div class="input-field col s12">
+					<input id="name" type="text" class="validate" data-bind="value: newItemName">
+					<label for="name">Name</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s6">
+					<input id="quantity" type="text" class="validate" data-bind="value: newItemQuantity">
+					<label for="quantity">Quantity</label>
+				</div>
+				<div class="input-field col s6">
+					<div class="select-wrapper">
+						<select data-bind="value: newItemUnit">
+							<option value="" disabled selected>Choose your unit</option>
+							<option value="1">g</option>
+							<option value="2">Kg</option>
+							<option value="3">lb</option>
+						</select>
+					</div>
+					<label for="unit">Unit</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s12">
+					<input type="date" class="datepicker" data-bind="value: newItemExpiryDate">
+				</div>
+			</div>
+		</form>
+	</div>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="modal-action modal-close waves-effect waves-green btn-flat" data-bind="click: addItem">Agree</a>
+	</div>
 </div>
 {% endblock %}

@@ -1,13 +1,101 @@
-// (function($){
-//   $(function(){
+function FridgeItem(item) {
+	this.id = item.id;
+	this.name = item.name;
+	this.quantity = item.quantity;
+	this.unit = item.unit;
+	var date_obj = moment(item.expiry_date);
+	if (moment().diff(date_obj) < 0) {
+		this.expire_note = "Expires in " + date_obj.toNow(true);
+	} else {
+		this.expire_note = "Expired in " + date_obj.toNow(true);
+	}
+	this.expiry_date = item.expiry_date;
+}
 
-    
+function getAllItems() {
+	var self = this;
 
-//   }); // end of document ready
-// })(jQuery); // end of jQuery name space
+	self.fridgeItems = ko.observable([]);
+	$.getJSON("/api/fridges/all", function(data) { 
+	    // Now use this data to update your view models, 
+	    // and Knockout will update your UI automatically 
+	    var result = $.map(data.items, function(item) { return new FridgeItem(item) });
+	    self.fridgeItems(result);
+	});
+}
+
+// This is a simple *viewmodel* - JavaScript that defines the data and behavior of your UI
+function FridgeViewModel() {
+	var self = this;
+
+	self.newItemName = ko.observable();
+	self.newItemQuantity = ko.observable();
+	self.newItemUnit = ko.observable();
+	self.newItemExpiryDate = ko.observable();
+
+	getAllItems();
+
+	self.addItem = function() {
+		var newItem = {
+			item_name: self.newItemName,
+			quantity: self.newItemQuantity,
+			unit_id: self.newItemUnit,
+			expiry_date: self.newItemExpiryDate
+		};
+
+		$.ajax({
+			data: ko.toJSON({ item: newItem }),
+			url: '/api/fridges/',
+			type: 'POST',
+			success: function(result) {
+				// Do something with the result
+				console.log(result);
+				// getAllItems();
+			}
+		});
+	}
+
+	self.removeItem = function(item) { 
+		$.ajax({
+			url: '/api/fridges/' + item.id,
+			type: 'DELETE',
+			success: function(result) {
+				// Do something with the result
+				Materialize.toast('I am a toast!', 4000)
+				getAllItems();
+			}
+		});
+	};
+
+	self.editItem = function(item) {
+		var editItem = {
+			item_name: item.name,
+			quantity: item.quantity,
+			unit_id: item.unit,
+			expiry_date: item.expiryDate
+		};
+		$.ajax({
+			data: ko.toJSON({ item: item }),
+			url: '/api/fridges/' + item.id,
+			type: 'PUT',
+			success: function(result) {
+				// Do something with the result
+				console.log(result);
+				// getAllItems();
+			}
+		});
+	};
+
+}
+
+// Activates knockout.js
+ko.applyBindings(new FridgeViewModel());
+
 
 $(document).ready(function() {
-	
+	    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+    $('.modal-trigger').leanModal();
+
 	$('.button-collapse').sideNav();
 
 	setGoTop();
